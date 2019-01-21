@@ -49,3 +49,8 @@ input.addEventListener("keyup", function(event) {
         document.getElementById("submit-button").click();
     }
 });
+
+
+function print(){
+ console.log(this.id) 
+}
