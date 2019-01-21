@@ -20,7 +20,7 @@ router.get("/dashboard", (req, res) => {
     User.findById(req.session.userId)
         .exec(function(error, user) {
             if (error) {
-                return next(error);
+                res.send(error);
             } else {
                 if (user === null) {
                     res.render("pages/register");
@@ -40,12 +40,12 @@ router.get("/", (req, res) => {
     User.findById(req.session.userId)
         .exec(function(error, user) {
             if (error) {
-                return next(error);
+                res.send(error)
             } else {
                 if (user === null) {
                     res.render("pages/register");
                 } else {
-                    res.render("pages/index", { debud: "true" })
+                    res.render("pages/index", { debud: "false" })
                 }
             }
         });
@@ -114,7 +114,7 @@ router.post("/createUser", (req, res) => {
         //use schema.create to insert data into the db
         User.create(userData, function(err, user) {
             if (err) {
-                return next(err)
+                return res.send(err)
             } else {
                 req.session.userId = user._id;
                 req.session.cookie.expires = false;
@@ -126,7 +126,7 @@ router.post("/createUser", (req, res) => {
             if (error || !user) {
                 var err = new Error('Wrong email or password.');
                 err.status = 401;
-                return next(err);
+                res.send(err);
             } else {
                 req.session.userId = user._id;
                 req.session.cookie.expires = false;
@@ -136,7 +136,7 @@ router.post("/createUser", (req, res) => {
     } else {
         var err = new Error('All fields required.');
         err.status = 400;
-        return next(err);
+        res.send(err)
     }
 
 
