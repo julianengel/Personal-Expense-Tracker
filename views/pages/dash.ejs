@@ -37,10 +37,11 @@
 
               <%if (cost.possesive != "me") { %>
                 <tr class="not-mine">
+                  <td> <button class="link"> <%= cost.label %> </button></td>
               <% } else {%>
                 <tr>
+                  <td><%= cost.label %></td>
                   <% } %>
-                <td><%= cost.label %></td>
                 <td><%= cost.amount %></td> 
                 <td><%= cost.date_string %></td> 
                 <td><%= cost.possesive %></td>
