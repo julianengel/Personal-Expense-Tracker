@@ -101,8 +101,7 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.post('/returned', (req,res)=>{
-  returnTotal()
-  console.log(req.body)
+  returnTotal(req.body.id)
   res.send("ok")
   
 })

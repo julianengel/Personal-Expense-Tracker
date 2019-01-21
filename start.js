@@ -8,7 +8,7 @@ const port = 3000;
 var db, db_address,db_name, db_string;
 
 
-var debugging = false;
+var debugging = true;
 
 if (debugging){
     db_string = process.env.db_string_debug;
