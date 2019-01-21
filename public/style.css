@@ -35,6 +35,19 @@
 	color:red;
 }
 
+.register{
+	width: 35vw;
+	border-width: 1px;
+	border-color: #95a5a6;
+	border-style: solid;
+	padding: 15px;
+}
+
+.register input{
+
+	margin-bottom: 10px;
+}
+
 
 /* Desktops and laptops ----------- */
 @media only screen 
