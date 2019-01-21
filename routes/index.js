@@ -45,7 +45,7 @@ router.get("/", (req, res) => {
                 if (user === null) {
                     res.render("pages/register");
                 } else {
-                    res.render("pages/index", { debud: "true" })
+                    res.render("pages/index", { debud: "false" })
                 }
             }
         });
