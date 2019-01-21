@@ -101,10 +101,42 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.post('/returned', (req,res)=>{
-  
+  returnTotal()
   console.log(req.body)
+  res.send("ok")
   
 })
+
+function returnTotal(id){
+  
+  // get a user with ID of 1
+Cost.findById(id, function(err, cost) {
+  if (err) throw err;
+
+  // show the one user
+  console.log(cost);
+  
+      // create a new user
+    var newReturn = Cost({
+      label: cost.label,
+      amount: cost.amount * -1,
+      date_string: cost.date_string,
+      date: cost.date,
+      possesive:cost.possesive
+    });
+
+    // save the user
+    newReturn.save(function(err) {
+      if (err) throw err;
+
+      console.log('Return created!');
+    });
+  
+  
+});
+  
+  
+}
 
 
 router.post("/createUser", (req, res) => {

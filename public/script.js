@@ -51,22 +51,17 @@ input.addEventListener("keyup", function(event) {
 });
 
 
-function print(item){
- console.log(item) 
-}
-
 function sendReturn(item) {
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          console.log("")
+          console.log("Successful")
         }
     };
-    const input = document.getElementById("input-text").value
-    xhttp.open("POST", "submit", true);
+    xhttp.open("POST", "returned", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("text=" + input);
+    xhttp.send("id=" + item);
 
 
 }
