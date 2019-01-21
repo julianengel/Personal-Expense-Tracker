@@ -30,7 +30,6 @@ router.get("/dashboard", (req, res) => {
                 }
             }
         });
-    // res.render("pages/dash")
 
 
 });
@@ -45,7 +44,7 @@ router.get("/", (req, res) => {
                 if (user === null) {
                     res.render("pages/register");
                 } else {
-                    res.render("pages/index", { debud: "false" })
+                    res.render("pages/index", { debud: true })
                 }
             }
         });
