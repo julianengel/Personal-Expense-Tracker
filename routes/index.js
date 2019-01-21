@@ -100,6 +100,12 @@ router.get('/logout', function(req, res, next) {
     }
 });
 
+router.post('/returned', (req,res)=>{
+  
+  console.log(req.body)
+  
+})
+
 
 router.post("/createUser", (req, res) => {
     if (req.body.email &&

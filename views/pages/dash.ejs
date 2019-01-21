@@ -36,8 +36,8 @@
               <% costs.forEach(function(cost){ %>
 
               <%if (cost.possesive != "me") { %>
-                <tr class="not-mine" id="<%= cost._id %>">
-                <td onclick="print(this)"> <%= cost.label %> </td>
+                <tr class="not-mine">
+                <td onclick="print('<%= cost._id %>')" > <%= cost.label %> </td>
               <% } else {%>
                 <tr>
                   <td><%= cost.label %></td>
