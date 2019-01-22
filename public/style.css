@@ -32,7 +32,12 @@
 
 .not-mine{
 
-	color:red;
+	color:#e84118;
+}
+
+.returned{
+
+	color:#4cd137;
 }
 
 .register{
@@ -48,6 +53,12 @@
 	margin-bottom: 10px;
 }
 
+.tot{
+	text-align: center;
+	text-decoration: bold;
+	text-decoration: italic;
+	color:#0097e6;
+}
 /* Desktops and laptops ----------- */
 @media only screen 
 and (min-width : 1224px) {

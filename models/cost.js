@@ -8,7 +8,9 @@ var costSchema = new Schema({
   label: {type: String, required: true},
   possesive: {type: String, required: true},
   date_string: {type: String, required: true},
-  date:{type: Date, required:true}
+  date:{type: Date, required:true},
+  returned: Number,
+  owner: {type: String, required: true},
 });
 
 costSchema.pre('save', function(next) {

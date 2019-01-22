@@ -6,6 +6,8 @@ const User = require('./../models/user');
 
 
 
+var debugging = false
+
 
 router.get('/register', (req, res) => {
 
@@ -16,16 +18,14 @@ router.get('/register', (req, res) => {
 
 router.get("/dashboard", (req, res) => {
 
-
     User.findById(req.session.userId)
         .exec(function(error, user) {
             if (error) {
                 res.send(error);
             } else {
                 if (user === null) {
-                    res.render("pages/register");
+                    res.redirect("/register");
                 } else {
-                    console.log(user._id)
                     getStats(loadData, req, res);
                 }
             }
@@ -42,28 +42,33 @@ router.get("/", (req, res) => {
                 res.send(error)
             } else {
                 if (user === null) {
-                    res.render("pages/register");
+                    res.redirect("/register");
                 } else {
-                    res.render("pages/index", { debud: true })
+                    res.render("pages/index", { debud: debugging })
+                }
+            }
+        });
+
+})
+
+
+router.get("/register",(req,res) => {
+
+        User.findById(req.session.userId)
+        .exec(function(error, user) {
+            if (error) {
+                res.send(error)
+            } else {
+                if (user === null) {
+                    res.render("/register");
+                } else {
+                    res.redirect("/", { debud: debugging })
                 }
             }
         });
 
 
-
-
-
 })
-
-// router.get('/profile', function (req, res) {
-
-// console.log(req.session)
-
-// // req.session.userID = "blah"
-// const uniqueId = req.sessionID
-// res.send(`Hit home page. Received the unique id: ${uniqueId}\n`)
-
-// })
 
 // GET route after registering
 router.get('/profile', function(req, res, next) {
@@ -77,7 +82,6 @@ router.get('/profile', function(req, res, next) {
                     err.status = 400;
                     return next(err);
                 } else {
-                    console.log(user._id)
                     return res.send('<h1>Name: </h1>' + user.username + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
                 }
             }
@@ -94,47 +98,41 @@ router.get('/logout', function(req, res, next) {
             if (err) {
                 return next(err);
             } else {
-                return res.redirect('/');
+                return res.redirect('/register');
             }
         });
     }
 });
 
-router.post('/returned', (req,res)=>{
-  returnTotal(req.body.id)
-  res.send("ok")
-  
+router.post('/returned', (req, res) => {
+    returnCost(req.body.id, req, res)
+
 })
 
-function returnTotal(id){
-  
-  // get a user with ID of 1
-Cost.findById(id, function(err, cost) {
-  if (err) throw err;
+function returnCost(id, req, res) {
 
-  // show the one user
-  console.log(cost);
-  
-      // create a new user
-    var newReturn = Cost({
-      label: cost.label,
-      amount: cost.amount * -1,
-      date_string: cost.date_string,
-      date: cost.date,
-      possesive:cost.possesive
+    // get a user with ID of 1
+    Cost.findById(id, function(err, cost) {
+        if (err) throw err;
+
+        // show the one cost
+        console.log(cost);
+
+        cost.returned = cost.amount;
+        cost.amount = 0;
+
+        cost.save(function(err) {
+            if (err) throw err;
+
+            console.log('Cost successfully updated!');
+            res.send("400")
+
+        });
+
+
     });
 
-    // save the user
-    newReturn.save(function(err) {
-      if (err) throw err;
 
-      console.log('Return created!');
-    });
-  
-  
-});
-  
-  
 }
 
 
@@ -176,11 +174,7 @@ router.post("/createUser", (req, res) => {
     }
 
 
-})
-
-
-
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+});
 
 
 router.post('/submit', function(req, res) {
@@ -190,7 +184,8 @@ router.post('/submit', function(req, res) {
     if (data.length == 1) {
         res.send([data[0], "error"]);
     } else {
-        logCost(data[0], data[1], data[2], data[3], data[4], req, res);
+        const user_id = req.session.userId
+        logCost(data[0], data[1], data[2], data[3], data[4], user_id, req, res);
     }
 
 
@@ -199,11 +194,9 @@ router.post('/submit', function(req, res) {
 function loadData(stats, req, res) {
 
     // get all the users
-    Cost.find({}, null, { sort: { date: -1 } }, function(err, costs) {
+    Cost.find({ owner: req.session.userId }, null, { sort: { date: -1 } }, function(err, costs) {
         if (err) throw err;
 
-        // object of all the users
-        console.log(costs[3]);
         res.render("pages/dash", { costs: costs, totals: stats });
     });
 
@@ -212,17 +205,71 @@ function loadData(stats, req, res) {
 function getStats(callback, req, res) {
 
     Cost.aggregate([{
+        $match: {
+            "owner": req.session.userId
+        }
+    }, {
         $group: {
             _id: "$possesive",
-            average_spending_amount: { $avg: "$amount" },
-            total_spending_amount: { $sum: "$amount" },
+            average_spending_amount: {
+                $avg: {
+                    "$add": [
+                        { "$ifNull": ["$amount", 0] },
+                        { "$ifNull": ["$returned", 0] }
+                    ]
+                }
+            },
+            total_spending_amount: {
+                $sum: {
+                    "$add": [
+                        { "$ifNull": ["$amount", 0] },
+                        { "$ifNull": ["$returned", 0] }
+                    ]
+                }
+            },
             total_entries: { $sum: 1 }
         }
     }], function(err, result) {
         if (err) {
+            throw(err)
             console.log("Error: " + err);
         } else {
-            // console.log(result);
+            var total;
+
+            if (result == "") {
+
+
+
+                placeholder = {
+                    _id: "Enter First Cost",
+                    average_spending_amount: 0.00,
+                    total_spending_amount: 0,
+                    total_entries: 0
+                }
+
+                result.push(placeholder)
+
+
+                total = {
+                    _id: "TOTAL",
+                    average_spending_amount: null,
+                    total_spending_amount: 0,
+                    total_entries: 0
+                }
+
+            } else {
+
+                const total_amount = result.map(tot => tot.total_spending_amount).reduce((prev, next) => prev + next);
+                const total_transactions = result.map(tot => tot.total_entries).reduce((prev, next) => prev + next);
+                total = {
+                    _id: "TOTAL",
+                    average_spending_amount: null,
+                    total_spending_amount: total_amount,
+                    total_entries: total_transactions
+                };
+            }
+
+            result.unshift(total)
             loadData(result, req, res);
 
         }
@@ -232,7 +279,8 @@ function getStats(callback, req, res) {
 }
 
 
-function logCost(amount, label, possesive, today, today_string, req, res) {
+
+function logCost(amount, label, possesive, today, today_string, user, req, res) {
 
 
     // create a new user
@@ -241,7 +289,8 @@ function logCost(amount, label, possesive, today, today_string, req, res) {
         label: label,
         possesive: possesive,
         date: today,
-        date_string: today_string
+        date_string: today_string,
+        owner: user
     });
     // save the user
     newEntry.save(function(err) {
