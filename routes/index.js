@@ -20,7 +20,7 @@ router.get("/dashboard", (req, res) => {
     User.findById(req.session.userId)
         .exec(function(error, user) {
             if (error) {
-                return next(error);
+                res.send(error);
             } else {
                 if (user === null) {
                     res.render("pages/register");
@@ -30,7 +30,6 @@ router.get("/dashboard", (req, res) => {
                 }
             }
         });
-    // res.render("pages/dash")
 
 
 });
@@ -40,12 +39,12 @@ router.get("/", (req, res) => {
     User.findById(req.session.userId)
         .exec(function(error, user) {
             if (error) {
-                return next(error);
+                res.send(error)
             } else {
                 if (user === null) {
                     res.render("pages/register");
                 } else {
-                    res.render("pages/index", { debud: "false" })
+                    res.render("pages/index", { debud: true })
                 }
             }
         });
@@ -101,6 +100,43 @@ router.get('/logout', function(req, res, next) {
     }
 });
 
+router.post('/returned', (req,res)=>{
+  returnTotal(req.body.id)
+  res.send("ok")
+  
+})
+
+function returnTotal(id){
+  
+  // get a user with ID of 1
+Cost.findById(id, function(err, cost) {
+  if (err) throw err;
+
+  // show the one user
+  console.log(cost);
+  
+      // create a new user
+    var newReturn = Cost({
+      label: cost.label,
+      amount: cost.amount * -1,
+      date_string: cost.date_string,
+      date: cost.date,
+      possesive:cost.possesive
+    });
+
+    // save the user
+    newReturn.save(function(err) {
+      if (err) throw err;
+
+      console.log('Return created!');
+    });
+  
+  
+});
+  
+  
+}
+
 
 router.post("/createUser", (req, res) => {
     if (req.body.email &&
@@ -114,7 +150,7 @@ router.post("/createUser", (req, res) => {
         //use schema.create to insert data into the db
         User.create(userData, function(err, user) {
             if (err) {
-                return next(err)
+                return res.send(err)
             } else {
                 req.session.userId = user._id;
                 req.session.cookie.expires = false;
@@ -126,7 +162,7 @@ router.post("/createUser", (req, res) => {
             if (error || !user) {
                 var err = new Error('Wrong email or password.');
                 err.status = 401;
-                return next(err);
+                res.send(err);
             } else {
                 req.session.userId = user._id;
                 req.session.cookie.expires = false;
@@ -136,7 +172,7 @@ router.post("/createUser", (req, res) => {
     } else {
         var err = new Error('All fields required.');
         err.status = 400;
-        return next(err);
+        res.send(err)
     }
 
 
