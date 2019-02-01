@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Expense Tracker</title>
+</head>
+
+<body>
+    <div class=" container">
+                <% if(debud == true) { %>
+        <div class="alert alert-warning mt-4" role="alert" style="position:absolute; width: 75%; text-align: center">
+          <strong>Warning!</strong> Debugging mode on. Data stored into Test DB.
+        </div>
+        <% } %>
+        <div class="d-flex justify-content-center main-container flex-column">
+            <div class='titles align-self-center'>
+                <h2>Expenditure Tracker</h2>
+                <p>Please Enter Your Spending Below</p>
+            </div>
+            <div class="align-self-center main-input">
+                <div class="input-group mb-3">
+                    <input class="form-control form-control-lg" type="text" placeholder="Spending Amount" name="text" id="input-text">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success" type="button" onclick="submitData()" id="submit-button">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="result align-self-center">
+                <p id="result-text"></p>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

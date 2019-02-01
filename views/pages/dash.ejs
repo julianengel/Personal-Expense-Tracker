@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    
+
+    <link rel="stylesheet" href="style.css">
+
+
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div class="container">
+
+      <div class="d-flex flex-column main-container">
+
+        <div class="align-self-center">
+          <h1>Costs - January 2019</h1>
+        </div>
+        <div>
+          <br>
+          <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Label</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Date</th>
+              <th scope="col">Possesive</th>
+            </tr>
+          </thead>
+          <tbody>
+              <% costs.forEach(function(cost){ %>
+
+              <%if (cost.possesive != "me" && cost.returned == undefined) { %>
+                <tr class="not-mine">
+                <td onclick="sendReturn('<%= cost._id %>')" > <%= cost.label %> </td>
+                <td><%= cost.amount %></td>
+              <% } else if (cost.returned != undefined){%>
+                <tr class="returned">
+                <td> <%= cost.label %> </td>
+                <td><%= cost.returned %></td>
+              <% } else { %>
+                <tr>
+                  <td><%= cost.label %></td>
+                  <td><%= cost.amount %></td>
+                  <% } %> 
+                <td><%= cost.date_string %></td> 
+                <td><%= cost.possesive %></td>
+              </tr>
+              <% }); %>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                <th>ID</th>
+                <th>Average</th>
+                <th>Total</th>
+                <th>Transactions</th>
+
+     
+              </tr>
+ 
+              <% totals.forEach(function(total){ %>
+
+              <% if (total._id == "TOTAL") {%>
+              <tr class="tot">
+              <% } else {%>
+                <tr>
+                  <% } %>
+                <td><%= total._id %></td>
+                <td><% if (total.average_spending_amount != null){ %> 
+                  <%= total.average_spending_amount.toFixed(2)%>
+                    <% } %>
+                  </td> 
+                <td><%= total.total_spending_amount.toFixed(2) %></td> 
+                <td><%= total.total_entries %></td>
+              </tr>
+              <% }); %>
+
+
+          </tbody>
+        </table>
+
+
+        </div>
+        
+
+      </div>
+
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="dashboard.js"></script>
+  </body>
+</html>
