@@ -151,7 +151,9 @@ router.post("/createUser", (req, res) => {
                 return res.send(err)
             } else {
                 req.session.userId = user._id;
-                req.session.cookie.expires = false;
+                    var twoWeeks = 2 * 7 * 24 * 3600 * 1000; //1 weeks                    
+				    req.session.cookie.expires = new Date(Date.now() + twoWeeks);
+				    req.session.cookie.maxAge = twoWeeks;
                 return res.redirect('/');
             }
         });
