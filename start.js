@@ -32,12 +32,13 @@ mongoose.connection.on("open", function(ref) {
 });
 
 mongoose.connection.on("error", function(err) {
-    console.log("Could not connect to mongo server!");
+    console.log("Could not connect to mongo server!...");
+    console.log("With Error: " + err.message)
     return console.log(err.message);
 });
 
 try {
-    mongoose.connect("mongodb://" + db_address);
+    mongoose.connect("mongodb+srv://" + db_address);
     db = mongoose.connection;
     console.log("Started connection on " + ("mongodb://" + "Atlas") + ", waiting for it to open...");
 } catch (err) {
